@@ -1,19 +1,20 @@
 import { useState, FormEvent } from 'react';
 import { DutyRecord } from '../types';
-import { format } from 'date-fns';
+import { format, subDays, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { PlusCircle, CheckCircle2, CircleDashed, Trash2, ListChecks, AlertTriangle } from 'lucide-react';
+import { PlusCircle, CheckCircle2, CircleDashed, Trash2, ListChecks, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface DutyPanelProps {
   duties: DutyRecord[];
   selectedDate: Date;
+  onSelectDate: (date: Date) => void;
   onSaveDuty: (title: string, date: string) => void;
   onToggleDuty: (id: string) => void;
   onDeleteDuty: (id: string) => void;
 }
 
-export function DutyPanel({ duties, selectedDate, onSaveDuty, onToggleDuty, onDeleteDuty }: DutyPanelProps) {
+export function DutyPanel({ duties, selectedDate, onSelectDate, onSaveDuty, onToggleDuty, onDeleteDuty }: DutyPanelProps) {
   const [newTitle, setNewTitle] = useState('');
 
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
@@ -36,13 +37,45 @@ export function DutyPanel({ duties, selectedDate, onSaveDuty, onToggleDuty, onDe
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl flex flex-col h-full">
-      <div className="flex items-center justify-between mb-5 sm:mb-8">
-        <h2 className="text-base sm:text-xl font-medium text-zinc-100 flex items-center gap-2">
+      <div className="flex items-center justify-between mb-5 sm:mb-8 gap-2">
+        <h2 className="text-base sm:text-xl font-medium text-zinc-100 flex items-center gap-2 flex-shrink-0">
           <ListChecks className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" /> Deveres
         </h2>
-        <span className="text-[10px] sm:text-xs font-mono bg-zinc-950 text-zinc-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-zinc-800">
-          {format(selectedDate, "dd 'de' MMM", { locale: ptBR })}
-        </span>
+        
+        <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => onSelectDate(subDays(selectedDate, 1))}
+            className="p-1 sm:p-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer"
+            title="Dia anterior"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+          
+          <label className="relative text-[10px] sm:text-xs font-mono bg-zinc-950 text-zinc-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-zinc-800 hover:border-zinc-700 cursor-pointer flex items-center gap-1.5 transition-all">
+            <span>{format(selectedDate, "dd 'de' MMM", { locale: ptBR })}</span>
+            <input 
+              type="date" 
+              value={format(selectedDate, 'yyyy-MM-dd')}
+              onChange={e => {
+                if (e.target.value) {
+                  const [year, month, day] = e.target.value.split('-').map(Number);
+                  onSelectDate(new Date(year, month - 1, day));
+                }
+              }}
+              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+            />
+          </label>
+
+          <button
+            type="button"
+            onClick={() => onSelectDate(addDays(selectedDate, 1))}
+            className="p-1 sm:p-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer"
+            title="Próximo dia"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="mb-4 sm:mb-6">

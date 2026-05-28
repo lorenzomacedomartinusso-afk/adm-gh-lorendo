@@ -192,6 +192,7 @@ export default function App() {
               <DutyPanel 
                 duties={duties} 
                 selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
                 onSaveDuty={saveDuty}
                 onToggleDuty={toggleDuty}
                 onDeleteDuty={deleteDuty}
@@ -280,6 +281,7 @@ export default function App() {
               <DutyPanel 
                 duties={duties} 
                 selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
                 onSaveDuty={saveDuty}
                 onToggleDuty={toggleDuty}
                 onDeleteDuty={deleteDuty}
