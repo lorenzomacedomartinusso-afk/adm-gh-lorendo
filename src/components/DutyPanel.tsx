@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { DutyRecord } from '../types';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -26,7 +26,7 @@ export function DutyPanel({ duties, selectedDate, onSaveDuty, onToggleDuty, onDe
     { title: 'Marcar consulta com Dra.' }
   ] : [];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (newTitle.trim()) {
       onSaveDuty(newTitle.trim(), dateStr);

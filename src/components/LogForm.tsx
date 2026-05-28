@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { InjectionSite, ProtocolTiming } from '../types';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -29,7 +29,7 @@ export function LogForm({ onSave, recommendedSite, selectedDate }: LogFormProps)
   const [notes, setNotes] = useState('');
   const [time, setTime] = useState(format(new Date(), 'HH:mm'));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSave({ 
       doseIU, 
