@@ -11,6 +11,42 @@ import { supabase } from './lib/supabase';
 
 type MobileView = 'calendar' | 'gh' | 'duties';
 
+const compressImage = (base64Str: string, maxWidth = 180, maxHeight = 180): Promise<string> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.75));
+      } else {
+        resolve(base64Str);
+      }
+    };
+    img.onerror = () => resolve(base64Str);
+  });
+};
+
 export default function App() {
   const { 
     records, 
@@ -60,19 +96,27 @@ export default function App() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = async () => {
-        const base64String = reader.result as string;
-        setProfilePic(base64String);
-        localStorage.setItem('gh-profile-pic', base64String);
+        const rawBase64 = reader.result as string;
+        
+        // Comprime a imagem antes de fazer o upload para evitar erro de Payload Too Large (413) no Supabase
+        const compressedBase64 = await compressImage(rawBase64);
+        
+        setProfilePic(compressedBase64);
+        localStorage.setItem('gh-profile-pic', compressedBase64);
 
         // Salva no Supabase em background
         try {
-          await supabase
+          const { error } = await supabase
             .from('app_settings')
             .upsert({ 
               key: 'profile_pic', 
-              value: base64String, 
+              value: compressedBase64, 
               updated_at: new Date().toISOString() 
             });
+            
+          if (error) {
+            console.error("Supabase upsert error:", error);
+          }
         } catch (err) {
           console.error("Failed to save profile pic to Supabase", err);
         }
