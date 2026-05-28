@@ -22,3 +22,63 @@
     background: #3f3f46;
   }
 }
+
+/* ===== Mobile Optimizations ===== */
+
+/* Prevent rubber-band / overscroll on iOS */
+html, body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Safe-area padding for notch devices */
+#root {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Smooth momentum scrolling on iOS */
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* Better touch targets – min 44px as per Apple HIG */
+@media (max-width: 640px) {
+  input, button, select, textarea {
+    min-height: 44px;
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+}
+
+/* Hide the bottom nav shadow on very small screens */
+@media (max-width: 380px) {
+  .bottom-nav-label {
+    display: none;
+  }
+}
+
+/* Animated bottom sheet entrance */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}

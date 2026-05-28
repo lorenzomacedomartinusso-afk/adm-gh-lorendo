@@ -21,39 +21,44 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
   const endDate = endOfWeek(monthEnd, { locale: ptBR, weekStartsOn: 0 });
   
   const days = eachDayOfInterval({ start: startDate, end: endDate });
-  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const weekDaysFull = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const weekDaysShort = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl flex-1 flex flex-col">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-medium text-zinc-100 capitalize tracking-tight font-sans">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-8 shadow-xl flex-1 flex flex-col">
+      {/* Month Navigation */}
+      <div className="flex justify-between items-center mb-4 sm:mb-8">
+        <h2 className="text-lg sm:text-2xl font-medium text-zinc-100 capitalize tracking-tight font-sans">
           {format(currentMonth, "MMMM yyyy", { locale: ptBR })}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 sm:gap-2">
           <button 
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} 
-            className="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-zinc-100"
+            className="p-2 sm:p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl hover:bg-zinc-800 active:bg-zinc-700 transition-colors text-zinc-400 hover:text-zinc-100"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button 
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} 
-            className="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-zinc-100"
+            className="p-2 sm:p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl hover:bg-zinc-800 active:bg-zinc-700 transition-colors text-zinc-400 hover:text-zinc-100"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-2 sm:gap-4 mb-4">
-        {weekDays.map(day => (
-          <div key={day} className="text-center text-xs sm:text-sm font-medium text-zinc-500 uppercase tracking-wider">
-            {day}
+      {/* Weekday Headers */}
+      <div className="grid grid-cols-7 gap-1 sm:gap-4 mb-2 sm:mb-4">
+        {weekDaysFull.map((day, i) => (
+          <div key={day} className="text-center text-[10px] sm:text-sm font-medium text-zinc-500 uppercase tracking-wider">
+            <span className="hidden sm:inline">{day}</span>
+            <span className="sm:hidden">{weekDaysShort[i]}</span>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2 sm:gap-4 flex-1">
+      {/* Day Grid */}
+      <div className="grid grid-cols-7 gap-1 sm:gap-4 flex-1">
         {days.map((day) => {
           const dateStr = format(day, 'yyyy-MM-dd');
           const dayRecords = records.filter(r => r.date === dateStr);
@@ -68,7 +73,7 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
               key={day.toString()}
               onClick={() => onSelectDate(day)}
               className={cn(
-                "min-h-[80px] sm:min-h-[120px] rounded-2xl p-2 sm:p-3 flex flex-col transition-all cursor-pointer group relative border",
+                "min-h-[48px] sm:min-h-[80px] lg:min-h-[120px] rounded-lg sm:rounded-2xl p-1 sm:p-2 lg:p-3 flex flex-col transition-all cursor-pointer group relative border active:scale-[0.97]",
                 isSelected 
                   ? "bg-zinc-800 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.1)]" 
                   : isMonth 
@@ -77,9 +82,10 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
                 is28th && isMonth && !isSelected && "border-amber-500/30"
               )}
             >
+              {/* Day Number */}
               <div className="flex justify-between items-start">
                 <span className={cn(
-                  "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full transition-colors",
+                  "text-xs sm:text-sm font-medium w-5 h-5 sm:w-7 sm:h-7 flex items-center justify-center rounded-full transition-colors",
                   isToday(day) 
                     ? "bg-emerald-500 text-zinc-950" 
                     : isSelected 
@@ -89,13 +95,15 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
                   {format(day, 'd')}
                 </span>
                 {is28th && isMonth && (
-                  <AlertTriangle className={cn("w-3 h-3 md:w-4 md:h-4", isSelected ? "text-emerald-400" : "text-amber-500")} />
+                  <AlertTriangle className={cn("w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4", isSelected ? "text-emerald-400" : "text-amber-500")} />
                 )}
               </div>
               
-              <div className="mt-auto flex flex-col gap-1.5">
+              {/* Day Content – hidden on very small, compact on mobile */}
+              <div className="mt-auto flex flex-col gap-0.5 sm:gap-1.5">
+                {/* Duties indicators */}
                 {(dayDuties.length > 0 || is28th) && (
-                   <div className="flex flex-wrap gap-1 mb-1">
+                   <div className="hidden sm:flex flex-wrap gap-1 mb-1">
                      {is28th && isMonth && (
                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" title="Dia 28: Medição, Exame, Dra." />
                      )}
@@ -113,15 +121,27 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
                      ))}
                    </div>
                 )}
+                
+                {/* Mobile: simple dot indicator */}
                 {dayRecords.length > 0 && (
-                  <>
+                  <div className="sm:hidden flex justify-center">
+                    <span className={cn(
+                      "w-1.5 h-1.5 rounded-full",
+                      isSelected ? "bg-emerald-400" : "bg-emerald-500/60"
+                    )} />
+                  </div>
+                )}
+
+                {/* Desktop: full UI badge */}
+                {dayRecords.length > 0 && (
+                  <div className="hidden sm:block">
                     <div className={cn(
                       "text-[10px] md:text-xs font-mono font-medium self-start px-2 py-0.5 rounded-md",
                       isSelected ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-800 text-zinc-300"
                     )}>
                       {totalUI.toFixed(1)} UI
                     </div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 mt-1">
                       {dayRecords.map(r => (
                         <div 
                           key={r.id} 
@@ -133,7 +153,7 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
                         />
                       ))}
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
