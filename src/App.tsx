@@ -55,33 +55,40 @@ export default function App() {
       <div className="max-w-[1600px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-10 flex flex-col flex-1 min-h-0 pb-20 lg:pb-10">
         
         {/* Header */}
-        <header className="flex items-center justify-between gap-3 mb-4 sm:mb-8 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <label className="relative w-10 h-10 sm:w-12 sm:h-12 bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800 hover:border-zinc-700 cursor-pointer overflow-hidden group transition-all flex-shrink-0">
-              {profilePic ? (
-                <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <User className="w-5 h-5 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
-              )}
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                 <Camera className="w-4 h-4 text-white" />
+        <header className="w-full flex flex-col gap-2 sm:gap-3 mb-6 sm:mb-10 flex-shrink-0">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col gap-0.5 sm:gap-1 flex-1 min-w-0 pr-4">
+              <h1 className="text-2xl sm:text-4xl font-black font-logo tracking-tight uppercase bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.15)] truncate">
+                ADM GH Lorenzo
+              </h1>
+              <p className="text-[11px] sm:text-sm font-medium text-zinc-500 tracking-wide">
+                Simplificando seu monitoramento diário.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="text-xs font-mono font-medium text-zinc-500 bg-zinc-950/60 border border-zinc-900 px-3 py-1.5 rounded-xl hidden sm:block">
+                {format(new Date(), "dd/MM/yyyy")}
               </div>
-              <input 
-                type="file" 
-                accept="image/*" 
-                className="hidden" 
-                onChange={handleProfilePicChange} 
-              />
-            </label>
-            <div>
-              <h1 className="text-lg sm:text-xl font-medium tracking-tight text-emerald-400">ADM GH Lorenzo</h1>
-              <p className="text-xs text-zinc-500 hidden sm:block">Simplificando seu monitoramento diário.</p>
+              <label className="relative w-11 h-11 sm:w-14 sm:h-14 bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-800 hover:border-zinc-700 shadow-md cursor-pointer overflow-hidden group transition-all">
+                {profilePic ? (
+                  <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-5 h-5 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+                )}
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                   <Camera className="w-4 h-4 text-white" />
+                </div>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleProfilePicChange} 
+                />
+              </label>
             </div>
           </div>
-          
-          <div className="text-xs font-mono text-zinc-600 hidden sm:block">
-            {format(new Date(), "dd/MM/yyyy")}
-          </div>
+          <div className="w-full h-[1px] bg-gradient-to-r from-emerald-500/20 via-zinc-800 to-transparent mt-1" />
         </header>
 
         {/* ========== DESKTOP LAYOUT ========== */}
