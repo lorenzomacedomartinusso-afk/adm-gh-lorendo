@@ -1,0 +1,6 @@
+{
+  "name": "ADM GH Lorenzo",
+  "description": "Aplicativo para administrar e registar protocolos de GH com gráficos e rotação de locais.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
