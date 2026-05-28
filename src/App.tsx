@@ -51,7 +51,7 @@ export default function App() {
   const dayRecords = records.filter(r => r.date === selectedDateStr);
 
   return (
-    <div className="h-screen lg:min-h-screen bg-[#050505] text-zinc-100 selection:bg-emerald-500/30 flex flex-col overflow-hidden lg:overflow-visible">
+    <div className="h-screen lg:h-auto lg:min-h-screen bg-[#050505] text-zinc-100 selection:bg-emerald-500/30 flex flex-col overflow-hidden lg:overflow-visible">
       <div className="max-w-[1600px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-10 flex flex-col flex-1 min-h-0 pb-20 lg:pb-10">
         
         {/* Header */}

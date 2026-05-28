@@ -28,6 +28,8 @@
 
 /* Prevent rubber-band / overscroll on iOS */
 html, body {
+  background-color: #050505;
+  color: #f4f4f5;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
 }
