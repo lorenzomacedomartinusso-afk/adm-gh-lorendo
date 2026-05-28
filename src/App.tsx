@@ -103,18 +103,6 @@ export default function App() {
             </div>
             
             <div className="flex items-center gap-3 flex-shrink-0">
-              <button
-                onClick={() => {
-                  if (window.confirm("Deseja realmente limpar todos os dados de teste (registros, deveres e foto)?")) {
-                    clearAllData();
-                    window.location.reload();
-                  }
-                }}
-                className="text-[10px] sm:text-xs font-semibold text-zinc-500 hover:text-red-400 hover:border-red-500/20 active:scale-95 border border-zinc-900 bg-zinc-950/60 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer"
-                title="Limpar todos os dados de teste"
-              >
-                Limpar Testes
-              </button>
               <div className="text-xs font-mono font-medium text-zinc-500 bg-zinc-950/60 border border-zinc-900 px-3 py-1.5 rounded-xl hidden sm:block">
                 {format(new Date(), "dd/MM/yyyy")}
               </div>
@@ -255,15 +243,105 @@ export default function App() {
           mobileView !== 'calendar' && "mobile-scroll"
         )}>
           {mobileView === 'calendar' && (
-            <div className="flex-1 flex flex-col min-h-0 fade-in h-full">
-              <Calendar 
-                records={records} 
-                duties={duties}
-                selectedDate={selectedDate} 
-                onSelectDate={(date) => {
-                  setSelectedDate(date);
-                }} 
-              />
+            <div className="flex-1 flex flex-col min-h-0 fade-in h-full gap-4 pb-4">
+              {/* Compact Calendar Container */}
+              <div className="flex-shrink-0">
+                <Calendar 
+                  records={records} 
+                  duties={duties}
+                  selectedDate={selectedDate} 
+                  onSelectDate={(date) => {
+                    setSelectedDate(date);
+                  }} 
+                />
+              </div>
+
+              {/* Day Details List Container */}
+              <div className="flex-1 min-h-0 overflow-y-auto space-y-3 px-1 custom-scrollbar pb-6">
+                {/* Doses Details */}
+                {dayRecords.length > 0 ? (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-md">
+                    <h3 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center justify-between">
+                      Log de {format(selectedDate, "dd/MM")}
+                      <span className="text-xs font-mono font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                        {dayRecords.reduce((sum, r) => sum + r.doseIU, 0).toFixed(1)} UI
+                      </span>
+                    </h3>
+                    
+                    <div className="space-y-2">
+                      {dayRecords.map(record => (
+                        <div key={record.id} className="bg-zinc-950 border border-zinc-850/60 p-3 rounded-xl flex items-start justify-between">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-emerald-400 font-mono font-medium text-xs">{record.time}</span>
+                              <span className="text-zinc-650">•</span>
+                              <span className="text-xs font-semibold text-zinc-200">{record.doseIU.toFixed(1)} UI</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] text-zinc-400">
+                              <span className="bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-300">{record.site}</span>
+                              <span>{record.protocol}</span>
+                            </div>
+                            {record.notes && (
+                              <p className="text-[10px] text-zinc-500 italic mt-1">{record.notes}</p>
+                            )}
+                          </div>
+                          <button 
+                            onClick={() => deleteRecord(record.id)}
+                            className="p-1.5 text-zinc-600 hover:text-red-400 active:text-red-400 rounded-lg"
+                            title="Remover dose"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-zinc-900/30 border border-zinc-800/40 border-dashed rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                    <p className="text-zinc-500 text-xs">Nenhum registro de GH para {format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}</p>
+                  </div>
+                )}
+
+                {/* Duties Details */}
+                {duties.filter(d => d.date === selectedDateStr).length > 0 ? (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-md">
+                    <h3 className="text-sm font-semibold text-zinc-300 mb-3">
+                      Deveres de {format(selectedDate, "dd/MM")}
+                    </h3>
+                    <div className="space-y-2">
+                      {duties.filter(d => d.date === selectedDateStr).map(duty => (
+                        <div 
+                          key={duty.id} 
+                          onClick={() => toggleDuty(duty.id)}
+                          className={cn(
+                            "border p-2.5 rounded-xl flex items-center justify-between cursor-pointer transition-all active:scale-[0.98]",
+                            duty.completed 
+                              ? "bg-zinc-950/50 border-zinc-850/50 opacity-60" 
+                              : "bg-zinc-900 border-zinc-800"
+                          )}
+                        >
+                          <span className={cn(
+                            "text-xs font-medium truncate",
+                            duty.completed ? "text-zinc-500 line-through" : "text-zinc-300"
+                          )}>
+                            {duty.title}
+                          </span>
+                          <span className={cn(
+                            "text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider",
+                            duty.completed ? "text-zinc-650 bg-zinc-800" : "text-blue-400 bg-blue-500/10"
+                          )}>
+                            {duty.completed ? "OK" : "Pendente"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-zinc-900/30 border border-zinc-800/40 border-dashed rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                    <p className="text-zinc-500 text-xs">Nenhum dever para {format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

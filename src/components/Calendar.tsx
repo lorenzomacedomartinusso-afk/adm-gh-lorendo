@@ -26,7 +26,7 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
   const rowCount = Math.ceil(days.length / 7);
 
   return (
-    <div className="bg-transparent sm:bg-zinc-900 border-0 sm:border border-zinc-800 rounded-2xl sm:rounded-3xl p-0.5 sm:p-6 lg:p-8 shadow-none sm:shadow-xl flex-1 flex flex-col h-full min-h-0">
+    <div className="bg-transparent sm:bg-zinc-900 border-0 sm:border border-zinc-800 rounded-2xl sm:rounded-3xl p-0.5 sm:p-6 lg:p-8 shadow-none sm:shadow-xl flex flex-col lg:flex-1 lg:h-full lg:min-h-0 flex-shrink-0">
       {/* Month Navigation */}
       <div className="flex justify-between items-center mb-4 sm:mb-8 flex-shrink-0">
         <h2 className="text-lg sm:text-2xl font-medium text-zinc-100 capitalize tracking-tight font-sans">
@@ -58,9 +58,8 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
         ))}
       </div>
 
-      {/* Day Grid */}
       <div 
-        className="grid grid-cols-7 gap-1 sm:gap-4 flex-1 h-full min-h-0"
+        className="grid grid-cols-7 gap-1 sm:gap-4 lg:flex-1 lg:h-full lg:min-h-0 h-[240px] sm:h-auto"
         style={{ gridTemplateRows: `repeat(${rowCount}, 1fr)` }}
       >
         {days.map((day) => {
