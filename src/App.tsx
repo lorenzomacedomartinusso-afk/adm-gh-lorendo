@@ -7,6 +7,7 @@ import { Calendar } from './components/Calendar';
 import { LogForm } from './components/LogForm';
 import { DutyPanel } from './components/DutyPanel';
 import { cn } from './lib/utils';
+import { supabase } from './lib/supabase';
 
 type MobileView = 'calendar' | 'gh' | 'duties';
 
@@ -30,17 +31,51 @@ export default function App() {
   const [mobileView, setMobileView] = useState<MobileView>('calendar');
 
   useEffect(() => {
-    setProfilePic(localStorage.getItem('gh-profile-pic'));
+    // 1. Carrega do LocalStorage instantaneamente para experiência offline-first
+    const cachedPic = localStorage.getItem('gh-profile-pic');
+    if (cachedPic) setProfilePic(cachedPic);
+
+    // 2. Busca o avatar atualizado do Supabase em background
+    async function loadProfilePic() {
+      try {
+        const { data, error } = await supabase
+          .from('app_settings')
+          .select('value')
+          .eq('key', 'profile_pic')
+          .single();
+        
+        if (!error && data?.value) {
+          setProfilePic(data.value);
+          localStorage.setItem('gh-profile-pic', data.value);
+        }
+      } catch (e) {
+        console.error("Failed to load profile pic from Supabase", e);
+      }
+    }
+    loadProfilePic();
   }, []);
 
   const handleProfilePicChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const base64String = reader.result as string;
         setProfilePic(base64String);
         localStorage.setItem('gh-profile-pic', base64String);
+
+        // Salva no Supabase em background
+        try {
+          await supabase
+            .from('app_settings')
+            .upsert({ 
+              key: 'profile_pic', 
+              value: base64String, 
+              updated_at: new Date().toISOString() 
+            });
+        } catch (err) {
+          console.error("Failed to save profile pic to Supabase", err);
+        }
       };
       reader.readAsDataURL(file);
     }

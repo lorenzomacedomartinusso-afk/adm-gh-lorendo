@@ -289,6 +289,7 @@ export function useDatabase() {
     try {
       await supabase.from('gh_records').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('duty_records').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('app_settings').delete().neq('key', 'empty_key');
     } catch (e) {
       console.error("Failed to clear Supabase data", e);
     }
