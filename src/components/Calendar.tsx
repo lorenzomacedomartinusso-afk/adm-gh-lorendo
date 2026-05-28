@@ -23,11 +23,12 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
   const days = eachDayOfInterval({ start: startDate, end: endDate });
   const weekDaysFull = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   const weekDaysShort = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+  const rowCount = Math.ceil(days.length / 7);
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-8 shadow-xl flex-1 flex flex-col">
+    <div className="bg-transparent sm:bg-zinc-900 border-0 sm:border border-zinc-800 rounded-2xl sm:rounded-3xl p-0.5 sm:p-6 lg:p-8 shadow-none sm:shadow-xl flex-1 flex flex-col h-full min-h-0">
       {/* Month Navigation */}
-      <div className="flex justify-between items-center mb-4 sm:mb-8">
+      <div className="flex justify-between items-center mb-4 sm:mb-8 flex-shrink-0">
         <h2 className="text-lg sm:text-2xl font-medium text-zinc-100 capitalize tracking-tight font-sans">
           {format(currentMonth, "MMMM yyyy", { locale: ptBR })}
         </h2>
@@ -48,7 +49,7 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
       </div>
 
       {/* Weekday Headers */}
-      <div className="grid grid-cols-7 gap-1 sm:gap-4 mb-2 sm:mb-4">
+      <div className="grid grid-cols-7 gap-1 sm:gap-4 mb-2 sm:mb-4 flex-shrink-0">
         {weekDaysFull.map((day, i) => (
           <div key={day} className="text-center text-[10px] sm:text-sm font-medium text-zinc-500 uppercase tracking-wider">
             <span className="hidden sm:inline">{day}</span>
@@ -58,7 +59,10 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
       </div>
 
       {/* Day Grid */}
-      <div className="grid grid-cols-7 gap-1 sm:gap-4 flex-1">
+      <div 
+        className="grid grid-cols-7 gap-1 sm:gap-4 flex-1 h-full min-h-0"
+        style={{ gridTemplateRows: `repeat(${rowCount}, 1fr)` }}
+      >
         {days.map((day) => {
           const dateStr = format(day, 'yyyy-MM-dd');
           const dayRecords = records.filter(r => r.date === dateStr);
@@ -73,11 +77,11 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
               key={day.toString()}
               onClick={() => onSelectDate(day)}
               className={cn(
-                "min-h-[48px] sm:min-h-[80px] lg:min-h-[120px] rounded-lg sm:rounded-2xl p-1 sm:p-2 lg:p-3 flex flex-col transition-all cursor-pointer group relative border active:scale-[0.97]",
+                "h-full min-h-0 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 lg:p-3 flex flex-col justify-between transition-all cursor-pointer group relative border active:scale-[0.95]",
                 isSelected 
-                  ? "bg-zinc-800 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.1)]" 
+                  ? "bg-zinc-800 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]" 
                   : isMonth 
-                    ? "bg-zinc-950/50 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800/80" 
+                    ? "bg-zinc-950/50 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/80" 
                     : "opacity-30 border-transparent bg-transparent hover:bg-zinc-900/50",
                 is28th && isMonth && !isSelected && "border-amber-500/30"
               )}
@@ -85,11 +89,11 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
               {/* Day Number */}
               <div className="flex justify-between items-start">
                 <span className={cn(
-                  "text-xs sm:text-sm font-medium w-5 h-5 sm:w-7 sm:h-7 flex items-center justify-center rounded-full transition-colors",
+                  "text-xs sm:text-sm font-medium w-5.5 h-5.5 sm:w-7 sm:h-7 flex items-center justify-center rounded-full transition-colors",
                   isToday(day) 
                     ? "bg-emerald-500 text-zinc-950" 
                     : isSelected 
-                      ? "text-emerald-400" 
+                      ? "text-emerald-400 font-semibold" 
                       : is28th ? "text-amber-400 font-bold" : "text-zinc-400 group-hover:text-zinc-200"
                 )}>
                   {format(day, 'd')}
@@ -122,15 +126,24 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
                    </div>
                 )}
                 
-                {/* Mobile: simple dot indicator */}
-                {dayRecords.length > 0 && (
-                  <div className="sm:hidden flex justify-center">
+                {/* Mobile: multi-colored dot indicators */}
+                <div className="sm:hidden flex justify-center gap-1.5 pb-0.5">
+                  {dayRecords.length > 0 && (
+                    <span className={cn(
+                      "w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)]",
+                      isSelected ? "bg-emerald-400" : "bg-emerald-500"
+                    )} />
+                  )}
+                  {dayDuties.length > 0 && (
                     <span className={cn(
                       "w-1.5 h-1.5 rounded-full",
-                      isSelected ? "bg-emerald-400" : "bg-emerald-500/60"
+                      dayDuties.every(d => d.completed) ? "bg-zinc-600" : "bg-blue-400"
                     )} />
-                  </div>
-                )}
+                  )}
+                  {is28th && isMonth && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  )}
+                </div>
 
                 {/* Desktop: full UI badge */}
                 {dayRecords.length > 0 && (
@@ -157,7 +170,7 @@ export function Calendar({ records, duties, selectedDate, onSelectDate }: Calend
                 )}
               </div>
             </div>
-          )
+          );
         })}
       </div>
     </div>

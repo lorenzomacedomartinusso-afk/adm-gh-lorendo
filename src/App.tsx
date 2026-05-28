@@ -51,8 +51,8 @@ export default function App() {
   const dayRecords = records.filter(r => r.date === selectedDateStr);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-zinc-100 selection:bg-emerald-500/30">
-      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-10 flex flex-col pb-20 lg:pb-10">
+    <div className="h-screen lg:min-h-screen bg-[#050505] text-zinc-100 selection:bg-emerald-500/30 flex flex-col overflow-hidden lg:overflow-visible">
+      <div className="max-w-[1600px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-10 flex flex-col flex-1 min-h-0 pb-20 lg:pb-10">
         
         {/* Header */}
         <header className="flex items-center justify-between gap-3 mb-4 sm:mb-8 flex-shrink-0">
@@ -194,9 +194,12 @@ export default function App() {
         </div>
 
         {/* ========== MOBILE LAYOUT ========== */}
-        <div className="lg:hidden flex flex-col flex-1 mobile-scroll">
+        <div className={cn(
+          "lg:hidden flex flex-col flex-1 min-h-0",
+          mobileView !== 'calendar' && "mobile-scroll"
+        )}>
           {mobileView === 'calendar' && (
-            <div className="fade-in">
+            <div className="flex-1 flex flex-col min-h-0 fade-in h-full">
               <Calendar 
                 records={records} 
                 duties={duties}
