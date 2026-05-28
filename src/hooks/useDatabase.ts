@@ -123,6 +123,14 @@ export function useDatabase() {
     return sites[(lastIdx + 1) % sites.length];
   };
 
+  const clearAllData = () => {
+    setRecords([]);
+    setDuties([]);
+    localStorage.removeItem(DB_KEY);
+    localStorage.removeItem(DUTY_KEY);
+    localStorage.removeItem('gh-profile-pic');
+  };
+
   return {
     records,
     duties,
@@ -134,6 +142,7 @@ export function useDatabase() {
     toggleDuty,
     getWeeklyStats,
     getTotalWeeklyIU,
-    getRecommendedSite
+    getRecommendedSite,
+    clearAllData
   };
 }

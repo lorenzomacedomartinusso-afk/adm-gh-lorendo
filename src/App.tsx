@@ -20,7 +20,8 @@ export default function App() {
     saveDuty,
     deleteDuty,
     toggleDuty,
-    getRecommendedSite
+    getRecommendedSite,
+    clearAllData
   } = useDatabase();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -67,6 +68,18 @@ export default function App() {
             </div>
             
             <div className="flex items-center gap-3 flex-shrink-0">
+              <button
+                onClick={() => {
+                  if (window.confirm("Deseja realmente limpar todos os dados de teste (registros, deveres e foto)?")) {
+                    clearAllData();
+                    window.location.reload();
+                  }
+                }}
+                className="text-[10px] sm:text-xs font-semibold text-zinc-500 hover:text-red-400 hover:border-red-500/20 active:scale-95 border border-zinc-900 bg-zinc-950/60 px-2.5 py-1.5 rounded-xl transition-all cursor-pointer"
+                title="Limpar todos os dados de teste"
+              >
+                Limpar Testes
+              </button>
               <div className="text-xs font-mono font-medium text-zinc-500 bg-zinc-950/60 border border-zinc-900 px-3 py-1.5 rounded-xl hidden sm:block">
                 {format(new Date(), "dd/MM/yyyy")}
               </div>
